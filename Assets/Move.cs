@@ -7,6 +7,10 @@ public class Move : MonoBehaviour
 {
     GameObject boat;
 
+    public float mass = 0;
+    public float centerOfMassZ = 0;
+    public float centerOfMassX = 0;
+    public float momentOfInertia = 0;
 
     // Use this for initialization
     void Start()
@@ -17,10 +21,10 @@ public class Move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float mass = 0;
-        float centerOfMassZ = 0;
-        float centerOfMassX = 0;
-        float momentOfInertia = 0;
+         mass = 0;
+         centerOfMassZ = 0;
+         centerOfMassX = 0;
+         momentOfInertia = 0;
         Vector3 force = new Vector3(Input.GetAxis("Horizontal") * 1000000, 0, Input.GetAxis("Vertical") * 1000000);
         boat.GetComponent<Rigidbody>().AddForce(force);
 
@@ -38,11 +42,11 @@ public class Move : MonoBehaviour
             centerOfMassZ += body.gameObject.transform.localPosition.z * body.mass;
         }
 
-       Debug.Log("Mass of " + boat.name + ": " + mass);
+       //Debug.Log("Mass of " + boat.name + ": " + mass);
         boat.GetComponent<Rigidbody>().mass = mass;
         centerOfMassZ /= mass;
         centerOfMassX /= mass;
-        Debug.Log("Center of mass for " + boat.name + ": " + centerOfMassZ + ", " + centerOfMassX);
+        //Debug.Log("Center of mass for " + boat.name + ": " + centerOfMassZ + ", " + centerOfMassX);
 
         foreach (Rigidbody body in bodies)
         {
@@ -61,6 +65,6 @@ public class Move : MonoBehaviour
             }
         }
 
-        Debug.Log("moment of Inertia for " + boat.name + ": " + momentOfInertia);
+        //Debug.Log("moment of Inertia for " + boat.name + ": " + momentOfInertia);
     }
 }
