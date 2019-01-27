@@ -26,6 +26,8 @@ public class Move : MonoBehaviour
     public float currentTime;
     public float startTime;
     public float actualBoatPosition;
+    public int frames;
+    public float time;
 
     public int thing;
 
@@ -93,16 +95,17 @@ public class Move : MonoBehaviour
 
     private void FixedUpdate()
     {
-        deltaTime += Time.deltaTime;
-
+        time = Time.deltaTime;
+        deltaTime += time;
 
         if (thing == 0)
         {
             if (boat.GetComponent<Rigidbody>().velocity.z > 0)
             {
+                frames++;
                 currentTime = deltaTime - startTime;
-                Debug.Log(boat.GetComponent<Rigidbody>().velocity);
-                Debug.Log(currentTime + " " + totalTime);
+                //Debug.Log(boat.GetComponent<Rigidbody>().velocity);
+                //Debug.Log(currentTime + " " + totalTime);
 
                 distance = initialPosition + initialVelocity * currentTime + 0.5 * initialAcceleration * Mathf.Pow(currentTime, 2);
 
@@ -120,26 +123,28 @@ public class Move : MonoBehaviour
         }
         else if (thing == 1)
         {
-            if (boat.GetComponent<Rigidbody>().velocity.z <= 0 || boat.transform.position.z >=16)
+            if (boat.GetComponent<Rigidbody>().velocity.z <= 0 || boat.transform.position.z >=stopPosition)
             {
-                //boat.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
+                boat.GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
                 totalTime = currentTime;
-                Debug.Log(totalTime);
+                distance = boat.transform.position.z;
+                //Debug.Log(totalTime);
+                //Debug.Log(boat.transform.position.z);
             }
             else
             {
+                //Debug.Log(distance + " " + stopPosition);
+                dragConstant = -initialAcceleration / Mathf.Pow(initialVelocity, 2);
+                //Debug.Log(dragConstant);
+                //Debug.Log(boat.GetComponent<Rigidbody>().velocity.z);
+                //Debug.Log(Mathf.Pow(boat.GetComponent<Rigidbody>().velocity.z, 2));
+                //Debug.Log(dragConstant);
+                //distance = initialPosition + (Mathf.Log(1 + initialVelocity * currentTime, (float)Math.E) / dragConstant);
+                //Debug.Log(initialVelocity / (1 + dragConstant * initialVelocity * currentTime));
+                boat.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, (float)(initialVelocity / (1 + dragConstant * initialVelocity * currentTime)));
                 currentTime = deltaTime - startTime;
+                frames++;
             }
-            //Debug.Log(distance + " " + stopPosition);
-            dragConstant = -initialAcceleration / Mathf.Pow(initialVelocity, 2);
-            //Debug.Log(dragConstant);
-            //Debug.Log(boat.GetComponent<Rigidbody>().velocity.z);
-            //Debug.Log(Mathf.Pow(boat.GetComponent<Rigidbody>().velocity.z, 2));
-            //Debug.Log(dragConstant);
-            distance = initialPosition + (Mathf.Log(1 + initialVelocity * currentTime, (float)Math.E) / dragConstant);
-            //Debug.Log(initialVelocity / (1 + dragConstant * initialVelocity * currentTime));
-            boat.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, (float)(initialVelocity / (1 + dragConstant * initialVelocity * currentTime)));
-
         }
         actualBoatPosition = boat.transform.position.z;
     }
