@@ -139,7 +139,7 @@ public class Move : MonoBehaviour
                 //Debug.Log(boat.GetComponent<Rigidbody>().velocity.z);
                 //Debug.Log(Mathf.Pow(boat.GetComponent<Rigidbody>().velocity.z, 2));
                 //Debug.Log(dragConstant);
-                //distance = initialPosition + (Mathf.Log(1 + initialVelocity * currentTime, (float)Math.E) / dragConstant);
+                distance = initialPosition + (Mathf.Log(1 + initialVelocity * currentTime, (float)Math.E) / dragConstant);
                 //Debug.Log(initialVelocity / (1 + dragConstant * initialVelocity * currentTime));
                 boat.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, (float)(initialVelocity / (1 + dragConstant * initialVelocity * currentTime)));
                 currentTime = deltaTime - startTime;
