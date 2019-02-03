@@ -19,7 +19,7 @@ public class Cannon : MonoBehaviour
         GameObject gunball = GameObject.Find("Gunball");
 
         //do calculations here
-        angle = Mathf.Rad2Deg * (Mathf.Asin(gravity * range / (Mathf.Pow(initialVelocity, 2) * 2)));
+        angle = Mathf.Rad2Deg * Mathf.Asin(gravity * range / Mathf.Pow(initialVelocity, 2)) / 2;
         gameObject.transform.eulerAngles = new Vector3(-angle, 0, 0);
     }
 
