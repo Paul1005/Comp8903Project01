@@ -37,13 +37,11 @@ public class Cannon : MonoBehaviour
         {
             vy = 0;
             vz = 0;
-            Debug.Log(true);
         }
         else
         {
             vy = vy + gravity * Time.deltaTime;
             time = time + Time.deltaTime;
-            Debug.Log(true);
         }
         gunball.GetComponent<Rigidbody>().velocity = new Vector3(0, vy, vz);
     }
