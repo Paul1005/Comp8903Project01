@@ -8,11 +8,15 @@ public class Cannon : MonoBehaviour
     public float initialVelocity;
     private float vy;
     private float vz;
+    private float py;
+    private float pz;
+    private float ipz;
     private float gravity;
     public float range;
     public float angle;
     private GameObject gunball;
     public float time;
+    private bool wasFired;
 
     // Use this for initialization
     void Start()
@@ -28,21 +32,26 @@ public class Cannon : MonoBehaviour
 
         vy = -initialVelocity * Mathf.Sin(angle * Mathf.Deg2Rad);
         vz = initialVelocity * Mathf.Cos(angle * Mathf.Deg2Rad);
-        gunball.GetComponent<Rigidbody>().velocity = new Vector3(0, vy, vz);
+        ipz = gunball.transform.position.z;
+        //gunball.GetComponent<Rigidbody>().velocity = new Vector3(0, vy, vz);
+        wasFired = false;
     }
 
     void FixedUpdate()
     {
-        if (gunball.transform.position.y < 0.05 && gunball.GetComponent<Rigidbody>().velocity.y <= 0)
+        if (wasFired && gunball.transform.position.y < 0.05)
         {
-            vy = 0;
-            vz = 0;
+
         }
         else
         {
-            vy = vy + gravity * Time.deltaTime;
             time = time + Time.deltaTime;
+
+            py = -initialVelocity * Mathf.Sin(angle * Mathf.Deg2Rad) * time + 0.5f * gravity * Mathf.Pow(time, 2);
+            pz = ipz + vz * time;
+            gunball.transform.position = new Vector3(gunball.transform.position.x, py, pz);
         }
-        gunball.GetComponent<Rigidbody>().velocity = new Vector3(0, vy, vz);
+
+        wasFired = true;
     }
 }
