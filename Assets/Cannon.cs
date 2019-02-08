@@ -6,14 +6,20 @@ public class Cannon : MonoBehaviour
 {
 
     public float initialVelocity;
-    private float vy;
-    private float vz;
+    public float vy;
+    public float vz;
+    public float vx;
     private float py;
     private float pz;
+    private float px;
     private float ipz;
+    private float ipx;
     private float gravity;
-    public float range;
+    public float rangeZ;
+    public float rangeX;
     public float angle;
+    public float alphaAngle;
+    public float gammaAngle;
     private GameObject gunball;
     public float time;
     private bool wasFired;
@@ -23,16 +29,21 @@ public class Cannon : MonoBehaviour
     {
         GameObject target = GameObject.Find("Target");
         gravity = -9.81f;
-        range = target.transform.position.z - gameObject.transform.position.z;
+        rangeZ = target.transform.position.z - gameObject.transform.position.z;
+        rangeX = target.transform.position.x - gameObject.transform.position.x;
         gunball = GameObject.Find("Gunball");
 
         //do calculations here
-        angle = Mathf.Rad2Deg * Mathf.Asin(gravity * range / Mathf.Pow(initialVelocity, 2)) / 2;
-        gameObject.transform.eulerAngles = new Vector3(angle, 0, 0);
+        angle = Mathf.Rad2Deg * Mathf.Asin(gravity * Mathf.Sqrt(Mathf.Pow(rangeZ,2) + Mathf.Pow(rangeX, 2)) / Mathf.Pow(initialVelocity, 2)) / 2; //=ASIN(9.81*SQRT(B10^2+B12^2)/B13^2)
+        alphaAngle = 90 + angle;
+        gammaAngle = Mathf.Asin(rangeX/Mathf.Sqrt(Mathf.Pow(rangeZ, 2) + Mathf.Pow(rangeX,2))) * Mathf.Rad2Deg;//=ASIN(B12/SQRT(B10^2+B12^2))
+        gameObject.transform.eulerAngles = new Vector3(angle, gammaAngle, 0);
 
         vy = -initialVelocity * Mathf.Sin(angle * Mathf.Deg2Rad);
-        vz = initialVelocity * Mathf.Cos(angle * Mathf.Deg2Rad);
+        vx = initialVelocity * Mathf.Sin(alphaAngle * Mathf.Deg2Rad) * Mathf.Sin(gammaAngle * Mathf.Deg2Rad);
+        vz = initialVelocity * Mathf.Sin(alphaAngle * Mathf.Deg2Rad) * Mathf.Cos(gammaAngle * Mathf.Deg2Rad);
         ipz = gunball.transform.position.z;
+        ipx = gunball.transform.position.x;
         //gunball.GetComponent<Rigidbody>().velocity = new Vector3(0, vy, vz);
         wasFired = false;
     }
@@ -48,8 +59,9 @@ public class Cannon : MonoBehaviour
             time = time + Time.deltaTime;
 
             py = -initialVelocity * Mathf.Sin(angle * Mathf.Deg2Rad) * time + 0.5f * gravity * Mathf.Pow(time, 2);
+            px = ipx + vx * time;
             pz = ipz + vz * time;
-            gunball.transform.position = new Vector3(gunball.transform.position.x, py, pz);
+            gunball.transform.position = new Vector3(px, py, pz);
         }
 
         wasFired = true;
