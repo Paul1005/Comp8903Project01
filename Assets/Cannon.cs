@@ -23,6 +23,7 @@ public class Cannon : MonoBehaviour
     private GameObject gunball;
     public float time;
     private bool wasFired;
+    public int ticks;
 
     // Use this for initialization
     void Start()
@@ -39,7 +40,7 @@ public class Cannon : MonoBehaviour
         gammaAngle = Mathf.Asin(rangeX/Mathf.Sqrt(Mathf.Pow(rangeZ, 2) + Mathf.Pow(rangeX,2))) * Mathf.Rad2Deg;//=ASIN(B12/SQRT(B10^2+B12^2))
         gameObject.transform.eulerAngles = new Vector3(angle, gammaAngle, 0);
 
-        vy = -initialVelocity * Mathf.Sin(angle * Mathf.Deg2Rad);
+        vy = initialVelocity * Mathf.Cos(alphaAngle * Mathf.Deg2Rad);
         vx = initialVelocity * Mathf.Sin(alphaAngle * Mathf.Deg2Rad) * Mathf.Sin(gammaAngle * Mathf.Deg2Rad);
         vz = initialVelocity * Mathf.Sin(alphaAngle * Mathf.Deg2Rad) * Mathf.Cos(gammaAngle * Mathf.Deg2Rad);
         ipz = gunball.transform.position.z;
@@ -57,11 +58,13 @@ public class Cannon : MonoBehaviour
         else
         {
             time = time + Time.deltaTime;
+            ticks++;
 
             py = -initialVelocity * Mathf.Sin(angle * Mathf.Deg2Rad) * time + 0.5f * gravity * Mathf.Pow(time, 2);
             px = ipx + vx * time;
             pz = ipz + vz * time;
             gunball.transform.position = new Vector3(px, py, pz);
+            vy = vy + gravity*Time.deltaTime;
         }
 
         wasFired = true;
