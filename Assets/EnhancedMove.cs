@@ -31,7 +31,7 @@ public class EnhancedMove : MonoBehaviour
         hull = GameObject.Find("Hull");
         gun = GameObject.Find("Gun");
         pilot = GameObject.Find("Pilot");
-
+        gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
         comPosition.x = (hull.transform.position.x * hullMass + gun.transform.position.x * gunMass + pilot.transform.position.x * pilotMass) / comMass;
         comPosition.z = (hull.transform.position.z * hullMass + gun.transform.position.z * gunMass + pilot.transform.position.z * pilotMass) / comMass;
     }
