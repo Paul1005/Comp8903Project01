@@ -16,10 +16,6 @@ public class EnhancedMove : MonoBehaviour
 
     private int comMass;
     private Vector3 acceleration;
-    private Vector3 comPosition;
-    private GameObject hull;
-    private GameObject gun;
-    private GameObject pilot;
     public int ticks;
     // Use this for initialization
     void Start()
@@ -28,12 +24,7 @@ public class EnhancedMove : MonoBehaviour
         comMass = hullMass + gunMass + pilotMass;
         Vector3 thrust = new Vector3(force * Mathf.Sin(angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(angle * Mathf.Deg2Rad));
         acceleration = new Vector3(thrust.x / comMass, thrust.y / comMass, thrust.z / comMass);
-        hull = GameObject.Find("Hull");
-        gun = GameObject.Find("Gun");
-        pilot = GameObject.Find("Pilot");
         gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
-        comPosition.x = (hull.transform.position.x * hullMass + gun.transform.position.x * gunMass + pilot.transform.position.x * pilotMass) / comMass;
-        comPosition.z = (hull.transform.position.z * hullMass + gun.transform.position.z * gunMass + pilot.transform.position.z * pilotMass) / comMass;
     }
 
     private void FixedUpdate()
