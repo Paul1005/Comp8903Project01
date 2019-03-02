@@ -73,7 +73,7 @@ public class Cannon : MonoBehaviour
 
             angularOmega_f = angularOmega_i + time * angularAlpha;
             angularTheta = angularOmega_i * time + angularAlpha * time * time / 2;
-            gunball.transform.eulerAngles = new Vector3(angularTheta, 0, 0);
+            gunball.transform.eulerAngles = new Vector3(angularTheta * Mathf.Rad2Deg, 0, 0);
         }
 
         wasFired = true;
