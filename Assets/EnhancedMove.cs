@@ -29,7 +29,7 @@ public class EnhancedMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (gameObject.transform.position.z <= dinZ.z)
+        if (gameObject.transform.position.z < dinZ.z)
         {
             ticks++;
             time += Time.deltaTime;
