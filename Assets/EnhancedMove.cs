@@ -4,40 +4,48 @@ using UnityEngine;
 
 public class EnhancedMove : MonoBehaviour
 {
-    public float dinZ;
+    public Vector3 dinZ;
     public float force;
     public float angle;
     public int hullMass;
     public int gunMass;
     public int pilotMass;
-    public float Time { get; }
-    public float vInitial;
-    public float VFinal { get; }
+    public float time;
+    public Vector3 vInitial;
+    public Vector3 vFinal;
 
     private int comMass;
-    private float acceleration;
-    public Vector3 comPosition;
+    private Vector3 acceleration;
+    private Vector3 comPosition;
     private GameObject hull;
     private GameObject gun;
     private GameObject pilot;
-
+    public int ticks;
     // Use this for initialization
     void Start()
     {
+        ticks = 0;
         comMass = hullMass + gunMass + pilotMass;
-        acceleration = force / comMass;
-        //= ($B$2 * E2 +$B$4 * E4 +$B$3 * E3)/$B$5
-        //= ($B$2 * F2 +$B$4 * F4 +$B$3 * F3)/$B$5
+        Vector3 thrust = new Vector3(force * Mathf.Sin(angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(angle * Mathf.Deg2Rad));
+        acceleration = new Vector3(thrust.x / comMass, thrust.y / comMass, thrust.z / comMass);
         hull = GameObject.Find("Hull");
         gun = GameObject.Find("Gun");
         pilot = GameObject.Find("Pilot");
 
-        comPosition.x = (hull.transform.position.x * hullMass + gun.transform.position.x * gunMass + pilot.transform.position.x * pilotMass)/comMass;
-        comPosition.z = (hull.transform.position.z * hullMass + gun.transform.position.z * gunMass + pilot.transform.position.z * pilotMass)/comMass;
+        comPosition.x = (hull.transform.position.x * hullMass + gun.transform.position.x * gunMass + pilot.transform.position.x * pilotMass) / comMass;
+        comPosition.z = (hull.transform.position.z * hullMass + gun.transform.position.z * gunMass + pilot.transform.position.z * pilotMass) / comMass;
     }
 
     private void FixedUpdate()
     {
-        //comPosition = ;
+        if (gameObject.transform.position.z <= dinZ.z)
+        {
+            ticks++;
+            time += Time.deltaTime;
+            float positionX = vInitial.x * time + 0.5f * acceleration.x * Mathf.Pow(time, 2);
+            float positionZ = vInitial.z * time + 0.5f * acceleration.z * Mathf.Pow(time, 2);
+            gameObject.transform.position = new Vector3(positionX, 0, positionZ);
+            vFinal = new Vector3(vInitial.x + acceleration.x * time, vInitial.y + acceleration.y * time, vInitial.z + acceleration.z * time);
+        }
     }
 }
