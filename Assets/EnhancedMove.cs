@@ -13,6 +13,7 @@ public class EnhancedMove : MonoBehaviour
     public float time;
     public Vector3 vInitial;
     public Vector3 vFinal;
+    private bool go;
 
     private int comMass;
     private Vector3 acceleration;
@@ -20,16 +21,22 @@ public class EnhancedMove : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        go = false;
         ticks = 0;
         comMass = hullMass + gunMass + pilotMass;
         Vector3 thrust = new Vector3(force * Mathf.Sin(angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(angle * Mathf.Deg2Rad));
         acceleration = new Vector3(thrust.x / comMass, thrust.y / comMass, thrust.z / comMass);
-        gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
     }
 
     private void FixedUpdate()
     {
-        if (gameObject.transform.position.z < dinZ.z)
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
+            go = true;
+        }
+
+        if (gameObject.transform.position.z < dinZ.z && go)
         {
             ticks++;
             time += Time.deltaTime;
