@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnhancedMove : MonoBehaviour
 {
-    public Vector3 dinZ;
     public float force;
     public float angle;
     public int hullMass;
@@ -13,37 +13,59 @@ public class EnhancedMove : MonoBehaviour
     public float time;
     public Vector3 vInitial;
     public Vector3 vFinal;
-    private bool go;
+    public Vector3 thrust;
+    public float vMax;
+    public float dragCoefficient;
+    public float tau;
+    public float totalTime;
 
-    private int comMass;
-    private Vector3 acceleration;
+    public int comMass;
+    public Vector3 acceleration;
     public int ticks;
     // Use this for initialization
     void Start()
     {
-        go = false;
         ticks = 0;
         comMass = hullMass + gunMass + pilotMass;
-        Vector3 thrust = new Vector3(force * Mathf.Sin(angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(angle * Mathf.Deg2Rad));
-        acceleration = new Vector3(thrust.x / comMass, thrust.y / comMass, thrust.z / comMass);
+        //acceleration = new Vector3(thrust.x / comMass, thrust.y / comMass, thrust.z / comMass);
+        tau = comMass / dragCoefficient;
+        vFinal = vInitial;
     }
 
     private void FixedUpdate()
     {
-        if (Input.GetKeyUp(KeyCode.W))
+        vMax = thrust.z / dragCoefficient;
+        if (Input.GetKey(KeyCode.W) && time < totalTime)
         {
-            gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
-            go = true;
-        }
-
-        if (gameObject.transform.position.z < dinZ.z && go)
-        {
+            //gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
+            thrust = new Vector3(force * Mathf.Sin(angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(angle * Mathf.Deg2Rad));
             ticks++;
             time += Time.deltaTime;
-            float positionX = vInitial.x * time + 0.5f * acceleration.x * Mathf.Pow(time, 2);
-            float positionZ = vInitial.z * time + 0.5f * acceleration.z * Mathf.Pow(time, 2);
-            gameObject.transform.position = new Vector3(positionX, 0, positionZ);
-            vFinal = new Vector3(vInitial.x + acceleration.x * time, vInitial.y + acceleration.y * time, vInitial.z + acceleration.z * time);
+
+            acceleration = new Vector3(
+                (thrust.x - dragCoefficient * vFinal.x) / comMass,
+                (thrust.y - dragCoefficient * vFinal.y) / comMass,
+                (thrust.z - dragCoefficient * vFinal.z) / comMass);
+
+            float positionZ = gameObject.transform.position.z + vMax * Time.deltaTime + (vMax - vFinal.z) * tau * (Mathf.Pow((float)Math.E, -Time.deltaTime / tau) - 1);
+
+            vFinal = new Vector3(0, 0, vMax - Mathf.Pow((float)Math.E, -dragCoefficient * Time.deltaTime / comMass) * (vMax - vFinal.z));
+
+            gameObject.transform.position = new Vector3(0, 0, positionZ);
+        }
+        else
+        {
+            thrust = new Vector3(0, 0, 0);
+            acceleration = new Vector3(
+    (thrust.x - dragCoefficient * vFinal.x) / comMass,
+    (thrust.y - dragCoefficient * vFinal.y) / comMass,
+    (thrust.z - dragCoefficient * vFinal.z) / comMass);
+
+            float positionZ = gameObject.transform.position.z + vMax * Time.deltaTime + (vMax - vFinal.z) * tau * (Mathf.Pow((float)Math.E, -Time.deltaTime / tau) - 1);
+
+            vFinal = new Vector3(0, 0, vMax - Mathf.Pow((float)Math.E, -dragCoefficient * Time.deltaTime / comMass) * (vMax - vFinal.z));
+
+            gameObject.transform.position = new Vector3(0, 0, positionZ);
         }
     }
 }
