@@ -37,10 +37,11 @@ public class EnhancedMove : MonoBehaviour
         vMax = thrust.z / dragCoefficient;
         if (Input.GetKey(KeyCode.W) && time < totalTime)
         {
+            time += Time.deltaTime;
+
             //gameObject.transform.eulerAngles = new Vector3(0, angle, 0);
             thrust = new Vector3(force * Mathf.Sin(angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(angle * Mathf.Deg2Rad));
             ticks++;
-            time += Time.deltaTime;
 
             acceleration = new Vector3(
                 (thrust.x - dragCoefficient * vFinal.x) / comMass,
@@ -52,14 +53,15 @@ public class EnhancedMove : MonoBehaviour
             vFinal = new Vector3(0, 0, vMax - Mathf.Pow((float)Math.E, -dragCoefficient * Time.deltaTime / comMass) * (vMax - vFinal.z));
 
             gameObject.transform.position = new Vector3(0, 0, positionZ);
+            Debug.Log("Time: " + time + " X: " + positionZ + " V: " + vFinal.z + " A: " + acceleration.z);
         }
-        else
+        else if (time < totalTime)
         {
             thrust = new Vector3(0, 0, 0);
             acceleration = new Vector3(
-    (thrust.x - dragCoefficient * vFinal.x) / comMass,
-    (thrust.y - dragCoefficient * vFinal.y) / comMass,
-    (thrust.z - dragCoefficient * vFinal.z) / comMass);
+                (thrust.x - dragCoefficient * vFinal.x) / comMass,
+                (thrust.y - dragCoefficient * vFinal.y) / comMass,
+                (thrust.z - dragCoefficient * vFinal.z) / comMass);
 
             float positionZ = gameObject.transform.position.z + vMax * Time.deltaTime + (vMax - vFinal.z) * tau * (Mathf.Pow((float)Math.E, -Time.deltaTime / tau) - 1);
 
