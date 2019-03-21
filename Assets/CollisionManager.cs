@@ -19,6 +19,7 @@ public class CollisionManager : MonoBehaviour
     public float initialTotalMomentum;
     public float finalTotalMomentum;
     public float vr;
+    public bool hasCollided;
 
     private Rigidbody gunBall;
     private Rigidbody target;
@@ -31,22 +32,13 @@ public class CollisionManager : MonoBehaviour
         finalBallVelocity = j / ballMass + initialBallVelocity;
         finalTargetVelocity = -j / targetMass + initialTargetVelocity;
 
-        initialBallMomentum = initialBallVelocity * ballMass;
-        initialTargetMomentum = initialTargetVelocity * targetMass;
-        finalBallMomentum = finalBallVelocity * ballMass;
-        finalTargetMomentum = finalTargetVelocity * targetMass;
-
-        initialTotalMomentum = initialTargetMomentum + initialBallMomentum;
-        finalTotalMomentum = finalTargetMomentum + finalBallMomentum;
-
         gunBall = GameObject.Find("Gunball").GetComponent<Rigidbody>();
         target = GameObject.Find("Target").GetComponent<Rigidbody>();
 
-        gunBall.velocity = new Vector3(0, 0, initialBallVelocity);
-        target.velocity = new Vector3(0, 0, -initialTargetVelocity);
-
         gunBall.mass = ballMass;
         target.mass = targetMass;
+
+        hasCollided = false;
     }
 
     // Update is called once per frame
@@ -57,6 +49,25 @@ public class CollisionManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!hasCollided)
+        {
+            gunBall.velocity = new Vector3(0, 0, initialBallVelocity);
+            target.velocity = new Vector3(0, 0, -initialTargetVelocity);
 
+            initialBallMomentum = gunBall.velocity.z * ballMass;
+            initialTargetMomentum = -target.velocity.z * targetMass;
+
+            initialTotalMomentum = initialTargetMomentum + initialBallMomentum;
+        }
+        else if (hasCollided)
+        {
+            gunBall.velocity = new Vector3(0, 0, finalBallVelocity);
+            target.velocity = new Vector3(0, 0, finalTargetVelocity);
+
+            finalBallMomentum = gunBall.velocity.z * ballMass;
+            finalTargetMomentum = target.velocity.z * targetMass;
+
+            finalTotalMomentum = finalTargetMomentum + finalBallMomentum;
+        }
     }
 }
