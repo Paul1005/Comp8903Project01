@@ -8,23 +8,23 @@ public class CollisionManager : MonoBehaviour
     public Vector3 initialBallVelocity;
     public Vector3 finalBallVelocity;
     public float initialBallMomentum;
-    public float finalBallMomentum;
+    public Vector3 finalBallMomentum;
     public float initialBallEnergy;
-    public float finalBallEnergy;
+    public Vector3 finalBallEnergy;
     public float targetMass;
     public Vector3 initialTargetVelocity;
     public Vector3 finalTargetVelocity;
     public float initialTargetMomentum;
-    public float finalTargetMomentum;
+    public Vector3 finalTargetMomentum;
     public float initialTargetEnergy;
-    public float finalTargetEnergy;
+    public Vector3 finalTargetEnergy;
     public float e;
     public Vector3 j;
     public float jn;
     public float initialTotalMomentum;
-    public float finalTotalMomentum;
+    public Vector3 finalTotalMomentum;
     public float initialTotalEnergy;
-    public float finalTotalEnergy;
+    public Vector3 finalTotalEnergy;
     public Vector3 vr;
     public Vector3 n;
     public bool hasCollided;
@@ -44,6 +44,10 @@ public class CollisionManager : MonoBehaviour
 
         gunBall.mass = ballMass;
         target.mass = targetMass;
+
+        initialBallEnergy = Mathf.Abs(0.5f * ballMass * Mathf.Pow(initialBallVelocity.z, 2));
+        initialTargetEnergy = Mathf.Abs(0.5f * targetMass * Mathf.Pow(initialTargetVelocity.z, 2));
+        initialTotalEnergy = initialBallEnergy + initialTargetEnergy;
 
         hasCollided = false;
         afterCollision = false;
@@ -70,7 +74,8 @@ public class CollisionManager : MonoBehaviour
         else if (hasCollided && !afterCollision)
         {
             n = (target.position - gunBall.position).normalized;
-
+            Debug.Log(gunBall.position);
+            Debug.Log(target.position);
             jn = Vector3.Dot(j, n);
 
             t = new Vector3(n.z, 0, n.x * -1);
@@ -93,10 +98,15 @@ public class CollisionManager : MonoBehaviour
             gunBall.velocity = finalBallVelocity;
             target.velocity = finalTargetVelocity;
 
-            finalBallMomentum = gunBall.velocity.z * ballMass;
-            finalTargetMomentum = target.velocity.z * targetMass;
+            finalBallMomentum = gunBall.velocity * ballMass;
+            finalTargetMomentum = target.velocity * targetMass;
 
             finalTotalMomentum = finalTargetMomentum + finalBallMomentum;
+
+            finalBallEnergy = 0.5f * ballMass * Vector3.Scale(gunBall.velocity, gunBall.velocity);
+            finalTargetEnergy = 0.5f * targetMass * Vector3.Scale(target.velocity, target.velocity);
+
+            finalTotalEnergy = finalBallEnergy + finalTargetEnergy;
 
             afterCollision = true;
         }

@@ -23,7 +23,9 @@ public class CollisionResponse : MonoBehaviour
 
         if (other.gameObject.name == "Target")
         {
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, other.gameObject.transform.position.z - 1);
+            float x = Mathf.Abs(gameObject.transform.position.x - other.gameObject.transform.position.x);
+            float z = Mathf.Sqrt(1 - Mathf.Pow(x, 2));
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, other.gameObject.transform.position.z - z);
         }
     }
 }
