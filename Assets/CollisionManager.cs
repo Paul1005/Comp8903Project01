@@ -24,7 +24,7 @@ public class CollisionManager : MonoBehaviour
     public float initialTotalMomentum;
     public Vector3 finalTotalMomentum;
     public float initialTotalEnergy;
-    public Vector3 finalTotalEnergy;
+    public Vector4 finalTotalEnergy;
     public Vector3 vr;
     public Vector3 n;
     public bool hasCollided;
@@ -67,27 +67,28 @@ public class CollisionManager : MonoBehaviour
             target.velocity = initialTargetVelocity;
 
             initialBallMomentum = gunBall.velocity.z * ballMass;
-            initialTargetMomentum = -target.velocity.z * targetMass;
+            initialTargetMomentum = target.velocity.z * targetMass;
 
             initialTotalMomentum = initialTargetMomentum + initialBallMomentum;
         }
         else if (hasCollided && !afterCollision)
         {
             n = (target.position - gunBall.position).normalized;
-            Debug.Log(gunBall.position);
-            Debug.Log(target.position);
+            Debug.Log(gunBall.position.z);
+            Debug.Log(target.position.z);
+
             jn = Vector3.Dot(j, n);
 
             t = new Vector3(n.z, 0, n.x * -1);
             Debug.Log(t);
+
             float initialBallVelocityNormalized = Vector3.Dot(initialBallVelocity, n);
-            Debug.Log(initialBallVelocityNormalized);
+
             float initialTargetVelocityNormalized = Vector3.Dot(initialTargetVelocity, n);
-            Debug.Log(initialTargetVelocityNormalized);
+
             float initialBallVelocityTangential = Vector3.Dot(initialBallVelocity, t);
-            Debug.Log(initialBallVelocityTangential);
+
             float initialTargetVelocityTangential = Vector3.Dot(initialTargetVelocity, t);
-            Debug.Log(initialTargetVelocityTangential);
 
             Vector3 finalBallVelocityNormalized = (jn / ballMass + initialBallVelocityNormalized) * n;
             Vector3 finalTargetVelocityNormalized = (-jn / targetMass + initialTargetVelocityNormalized) * n;
@@ -107,6 +108,7 @@ public class CollisionManager : MonoBehaviour
             finalTargetEnergy = 0.5f * targetMass * Vector3.Scale(target.velocity, target.velocity);
 
             finalTotalEnergy = finalBallEnergy + finalTargetEnergy;
+            finalTotalEnergy.w = finalTotalEnergy.x + finalTotalEnergy.z;
 
             afterCollision = true;
         }
