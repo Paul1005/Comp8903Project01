@@ -20,14 +20,11 @@ public class CollisionResponse : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         GameObject.Find("CollisionManager").GetComponent<CollisionManager>().hasCollided = true;
-        GameObject.Find("TorqueManager").GetComponent<CollisionManager>().hasCollided = true;
+        GameObject.Find("CollisionManager").GetComponent<TorqueManager>().hasCollided = true;
 
         if (other.gameObject.name == "Target")
         {
-            float x = Mathf.Abs(gameObject.transform.position.x - other.gameObject.transform.position.x);
-            float z = Mathf.Sqrt(1 - Mathf.Pow(x, 2));
-            Debug.Log(z);
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, other.gameObject.transform.position.z - z);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, other.gameObject.transform.position.z - 1);
         }
     }
 }
