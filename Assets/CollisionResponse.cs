@@ -20,6 +20,7 @@ public class CollisionResponse : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         GameObject.Find("CollisionManager").GetComponent<CollisionManager>().hasCollided = true;
+        GameObject.Find("TorqueManager").GetComponent<CollisionManager>().hasCollided = true;
 
         if (other.gameObject.name == "Target")
         {
