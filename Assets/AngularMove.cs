@@ -33,7 +33,7 @@ public class AngularMove : MonoBehaviour
         left = false;
         ticks = 0;
         EnhancedMove enhancedMove = gameObject.GetComponent<EnhancedMove>();
-        comMass = enhancedMove.hullMass + enhancedMove.gunMass + enhancedMove.pilotMass;
+        comMass = 0;// enhancedMove.hullMass + enhancedMove.gunMass + enhancedMove.pilotMass;
 
         hull = GameObject.Find("Hull");
         gun = GameObject.Find("Gun");
@@ -54,7 +54,7 @@ public class AngularMove : MonoBehaviour
 
         momentOfInertia = inertiaHull + inertiaPilot;
 
-        thrust = new Vector3(force * Mathf.Sin(enhancedMove.angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(enhancedMove.angle * Mathf.Deg2Rad));
+        thrust = new Vector3(/*force * Mathf.Sin(enhancedMove.angle * Mathf.Deg2Rad), 0, force * Mathf.Cos(enhancedMove.angle * Mathf.Deg2Rad)*/);
 
         rLeft = new Vector3(2 - comPosition.x, 0, -4 - comPosition.z);
         rRight = new Vector3(-2 - comPosition.x, 0, -4 - comPosition.z);
